@@ -7,23 +7,19 @@ function nameIsString(req, res, next) {
     next()
 }
 
-function colorIsString(req, res, next) {
+function colorIsHexadecimal(req, res, next) {
     if (!req.body.color || typeof req.body.color !== 'string') {
         return res
             .status(400)
             .json({ message: 'body.color must be of type string' })
     }
-    const reg = new RegExp(
-        '(red|green|blue|orange|purple|gray|yellow|pink)',
-        'g'
-    )
+    const reg = new RegExp('^#(?:[0-9a-fA-F]{3}){1,2}$')
     if (!reg.test(req.body.color)) {
         return res.status(400).json({
-            message:
-                'body.color must be one of the following colors: red, green, blue, orange, purple, gray, yellow, pink.',
+            message: 'body.color must be an hexadecimal',
         })
     }
     next()
 }
 
-module.exports = { nameIsString, colorIsString }
+module.exports = { nameIsString, colorIsHexadecimal }

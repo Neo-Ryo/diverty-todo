@@ -6,5 +6,8 @@ export function useStore() {
     function setTags(t) {
         tags.value = t
     }
-    return { tags, setTags }
+    function addNewTag(t) {
+        tags.value.push(t)
+    }
+    return { tags, setTags, addNewTag }
 }

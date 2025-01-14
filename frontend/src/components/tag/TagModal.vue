@@ -1,5 +1,7 @@
 <script setup>
-import { ref, onUpdated } from 'vue'
+import { ref } from 'vue'
+import axios from 'axios'
+import TagPill from './TagPill.vue'
 import { useStore } from '../store/store'
 
 const props = defineProps(['todo'])
@@ -8,12 +10,29 @@ const store = useStore()
 
 let inputSearch = ref('')
 let color = ref('#1c71d8')
+let newTag = ref(null)
 const isSelected = (tagId) => {
     return props.todo.tags.map((e) => e._id.toString()).includes(tagId)
 }
 
-function pillColor(color) {
-    return `bg-${color}-500 w-2 h-2 rounded-full`
+function handleNewTag() {
+    newTag.value = { name: '', color }
+}
+
+async function createTag() {
+    console.log('clicked')
+
+    if (newTag.value.name.trim() === '') return
+    try {
+        const response = await axios.post('/api/tags', {
+            name: newTag.value.name,
+            color: newTag.value.color,
+        })
+        store.addNewTag(response.data)
+        newTag.value = null
+    } catch (error) {
+        console.error(error)
+    }
 }
 </script>
 
@@ -39,6 +58,7 @@ function pillColor(color) {
 
                 <button
                     class="flex justify-center items-center text-blue-500 text-2xl"
+                    :onclick="handleNewTag"
                 >
                     +
                 </button>
@@ -51,7 +71,7 @@ function pillColor(color) {
             >
                 <!-- filter tags with search -->
                 <div
-                    class="flex items-center p-2 rounded-md shadow-sm hover:cursor-pointer"
+                    class="flex items-center p-2 rounded-md shadow-sm hover:cursor-pointer hover:bg-slate-200"
                     v-if="
                         inputSearch === '' ||
                         tag.name
@@ -59,12 +79,14 @@ function pillColor(color) {
                             .includes(inputSearch.toLowerCase())
                     "
                 >
-                    <span :class="pillColor(tag.color)" class="m-2"></span>
+                    <!-- <span :class="pillColor(tag.color)"  class="m-2"></span> -->
+                    <TagPill :color="tag.color" />
                     {{ tag.name }}
                     <div
                         v-if="isSelected(tag._id.toString())"
                         class="h-6 w-6 mx-2 text-blue-500"
                     >
+                        <!-- check mark -->
                         <svg
                             viewBox="0 0 24 24"
                             fill="none"
@@ -76,11 +98,61 @@ function pillColor(color) {
                                 stroke="currentColor"
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
+                                stroke-width="2"
                             />
                         </svg>
                     </div>
                 </div>
             </li>
+            <div
+                class="flex items-center p-2 rounded-md shadow-sm"
+                v-if="newTag"
+            >
+                <!-- <span :class="pillColor(tag.color)"  class="m-2"></span> -->
+                <TagPill :color="newTag.color" />
+                <input
+                    class="appearance-none"
+                    type="text"
+                    v-model="newTag.name"
+                />
+
+                <button
+                    class="h-6 w-6 mx-2 text-green-500"
+                    type="button"
+                    @click="createTag()"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <rect width="24" height="24" fill="white" />
+                        <path
+                            d="M5 13.3636L8.03559 16.3204C8.42388 16.6986 9.04279 16.6986 9.43108 16.3204L19 7"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                        />
+                    </svg>
+                </button>
+                <button class="text-red-500">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+            </div>
             <button type="button" class="self-end m-2" @click="$emit('close')">
                 x
             </button>

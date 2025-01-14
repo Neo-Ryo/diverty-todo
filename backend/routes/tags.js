@@ -2,7 +2,7 @@
 
 const express = require('express')
 const router = express.Router()
-const { colorIsString, nameIsString } = require('../middleware/bodyCheck')
+const { colorIsHexadecimal, nameIsString } = require('../middleware/bodyCheck')
 const Tag = require('../models/Tag')
 
 // GET all tags
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 
 // Create a tag
 // middleware to check if body is present and types are corrensponding
-router.post('/', colorIsString, nameIsString, async (req, res) => {
+router.post('/', colorIsHexadecimal, nameIsString, async (req, res) => {
     try {
         const { name, color } = req.body
         const isTagExists = await Tag.findOne({ name })
