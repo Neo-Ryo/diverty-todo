@@ -1,5 +1,5 @@
-import { createApp } from 'vue';
-import App from './App.vue';
-import './assets/tailwind.css'; // Import Tailwind CSS
+import { createApp } from 'vue'
+import App from './App.vue'
+import './assets/tailwind.css' // Import Tailwind CSS
 
-createApp(App).mount('#app');
+createApp(App).mount('#app')

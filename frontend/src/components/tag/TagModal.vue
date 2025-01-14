@@ -1,10 +1,13 @@
 <script setup>
-import { ref } from 'vue'
-const props = defineProps(['tags', 'todo'])
+import { ref, onUpdated } from 'vue'
+import { useStore } from '../store/store'
+
+const props = defineProps(['todo'])
+
+const store = useStore()
 
 let inputSearch = ref('')
-const tags = ref(props.tags)
-
+let color = ref('#1c71d8')
 const isSelected = (tagId) => {
     return props.todo.tags.map((e) => e._id.toString()).includes(tagId)
 }
@@ -25,7 +28,15 @@ function pillColor(color) {
                     placeholder="Search"
                     v-model="inputSearch"
                 />
-                <div class="w-4 h-4 bg-blue-500"></div>
+                <input
+                    type="color"
+                    name="color"
+                    class="w-4 h-6"
+                    :value="color"
+                    id=""
+                    :onchange="(e) => (color = e.target.value)"
+                />
+
                 <button
                     class="flex justify-center items-center text-blue-500 text-2xl"
                 >
@@ -33,7 +44,11 @@ function pillColor(color) {
                 </button>
             </div>
 
-            <li v-for="tag in tags" :key="tag._id" class="list-none">
+            <li
+                v-for="tag in store.tags.value"
+                :key="tag._id"
+                class="list-none"
+            >
                 <!-- filter tags with search -->
                 <div
                     class="flex items-center p-2 rounded-md shadow-sm hover:cursor-pointer"
@@ -43,7 +58,6 @@ function pillColor(color) {
                             .toLowerCase()
                             .includes(inputSearch.toLowerCase())
                     "
-                    @onclick=""
                 >
                     <span :class="pillColor(tag.color)" class="m-2"></span>
                     {{ tag.name }}

@@ -26,7 +26,6 @@
                         :delete-todo="deleteTodo"
                         :update-todo="updateTodo"
                         :todo="todo"
-                        :tags="tags"
                     />
                 </li>
             </transition-group>
@@ -37,10 +36,11 @@
 <script>
 import axios from 'axios'
 import Sortable from 'sortablejs'
-import Tag from './tag/Tag.vue'
-import TagModal from './tag/TagModal.vue'
+import Tag from '../tag/Tag.vue'
+import TagModal from '../tag/TagModal.vue'
 import Todo from './Todo.vue'
-
+import { useStore } from '../store/store'
+const store = useStore()
 export default {
     name: 'TodoList',
     components: {
@@ -54,7 +54,7 @@ export default {
             newTodo: '',
             notification: '',
             notificationClass: '',
-            tags: [],
+            ...store,
         }
     },
     methods: {
@@ -62,7 +62,7 @@ export default {
         async fetchTags() {
             try {
                 const response = await axios.get('/api/tags')
-                this.tags = response.data
+                this.setTags(response.data)
             } catch (error) {
                 console.error(error)
                 this.showNotification(

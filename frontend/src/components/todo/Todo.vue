@@ -1,6 +1,6 @@
 <script>
-import Tag from './tag/Tag.vue'
-import TagModal from './tag/TagModal.vue'
+import Tag from '../tag/Tag.vue'
+import TagModal from '../tag/TagModal.vue'
 
 export default {
     name: 'Todo',
@@ -115,8 +115,8 @@ export default {
             <TagModal
                 v-show="isModalVisible"
                 @close="closeModal"
-                :tags="tags"
                 :todo="todo"
+                :tags="tags"
             />
         </div>
     </div>
