@@ -1,5 +1,10 @@
 <script setup>
+import { ref, computed } from 'vue'
 const props = defineProps(['tags', 'todo'])
+
+let inputSearch = ref('')
+const tags = ref(props.tags)
+
 const isSelected = (tagId) => {
     return props.todo.tags.map((e) => e._id.toString()).includes(tagId)
 }
@@ -7,6 +12,18 @@ const isSelected = (tagId) => {
 function pillColor(color) {
     return `bg-${color}-500 w-2 h-2 rounded-full`
 }
+
+// const filterTags = computed(() => {
+//     if (inputSearch && inputSearch.length) {
+//         console.log('SEARCH: ', inputSearch)
+//         console.log('TAGS: ', tags)
+
+//         return tags.filter((tag) => tag.name.includes(inputSearch))
+//         // return []
+//     } else {
+//         return tags
+//     }
+// })
 </script>
 
 <template>
@@ -14,35 +31,46 @@ function pillColor(color) {
         <div class="flex flex-col min-w-80 min-h-80 rounded-md border bg-white">
             <!-- search bar + color selecto + create button -->
             <div class="flex justify-between items-center m-2 p-2">
-                <input class="border" type="text" />
+                <input
+                    class="border rounded-md p-0.5"
+                    type="text"
+                    placeholder="Search"
+                    v-model="inputSearch"
+                />
                 <div class="w-4 h-4 bg-blue-500"></div>
                 <button>+</button>
             </div>
 
-            <li
-                v-for="tag in props.tags"
-                :key="tag._id"
-                class="flex items-center p-2 bg-gray-50 rounded-md shadow-sm"
-            >
-                <span :class="pillColor(tag.color)" class="m-2"></span>
-                {{ tag.name }}
+            <li v-for="tag in tags" :key="tag._id" class="list-none">
                 <div
-                    v-if="isSelected(tag._id.toString())"
-                    class="h-6 w-6 mx-2 text-blue-500"
+                    class="flex items-center p-2 rounded-md shadow-sm"
+                    v-if="
+                        inputSearch === '' ||
+                        tag.name
+                            .toLowerCase()
+                            .includes(inputSearch.toLowerCase())
+                    "
                 >
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+                    <span :class="pillColor(tag.color)" class="m-2"></span>
+                    {{ tag.name }}
+                    <div
+                        v-if="isSelected(tag._id.toString())"
+                        class="h-6 w-6 mx-2 text-blue-500"
                     >
-                        <rect width="24" height="24" fill="white" />
-                        <path
-                            d="M5 13.3636L8.03559 16.3204C8.42388 16.6986 9.04279 16.6986 9.43108 16.3204L19 7"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        />
-                    </svg>
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <rect width="24" height="24" fill="white" />
+                            <path
+                                d="M5 13.3636L8.03559 16.3204C8.42388 16.6986 9.04279 16.6986 9.43108 16.3204L19 7"
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </div>
                 </div>
             </li>
             <button type="button" class="self-end m-2" @click="$emit('close')">
