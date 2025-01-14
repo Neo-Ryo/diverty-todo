@@ -6,6 +6,8 @@ const dotenv = require('dotenv')
 const morgan = require('morgan')
 const todoRoutes = require('./routes/todos')
 const tagRoutes = require('./routes/tags')
+const Todo = require('./models/Todo')
+const Tag = require('./models/Tag')
 const net = require('net')
 
 dotenv.config()
@@ -51,7 +53,13 @@ const startServer = async () => {
             family: 4,
         })
         console.log('Connected to MongoDB')
-
+        // creating collections in case they dont exists
+        Todo.createCollection().then(function (collection) {
+            console.log(`Collection ${collection.name} is created!`)
+        })
+        Tag.createCollection().then(function (collection) {
+            console.log(`Collection ${collection.name} is created!`)
+        })
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server is running on port ${PORT}`)
             // Stocker le port utilisé dans une variable d'environnement pour que le frontend puisse l'utiliser

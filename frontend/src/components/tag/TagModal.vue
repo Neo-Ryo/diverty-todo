@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 const props = defineProps(['tags', 'todo'])
 
 let inputSearch = ref('')
@@ -12,18 +12,6 @@ const isSelected = (tagId) => {
 function pillColor(color) {
     return `bg-${color}-500 w-2 h-2 rounded-full`
 }
-
-// const filterTags = computed(() => {
-//     if (inputSearch && inputSearch.length) {
-//         console.log('SEARCH: ', inputSearch)
-//         console.log('TAGS: ', tags)
-
-//         return tags.filter((tag) => tag.name.includes(inputSearch))
-//         // return []
-//     } else {
-//         return tags
-//     }
-// })
 </script>
 
 <template>
@@ -38,18 +26,24 @@ function pillColor(color) {
                     v-model="inputSearch"
                 />
                 <div class="w-4 h-4 bg-blue-500"></div>
-                <button>+</button>
+                <button
+                    class="flex justify-center items-center text-blue-500 text-2xl"
+                >
+                    +
+                </button>
             </div>
 
             <li v-for="tag in tags" :key="tag._id" class="list-none">
+                <!-- filter tags with search -->
                 <div
-                    class="flex items-center p-2 rounded-md shadow-sm"
+                    class="flex items-center p-2 rounded-md shadow-sm hover:cursor-pointer"
                     v-if="
                         inputSearch === '' ||
                         tag.name
                             .toLowerCase()
                             .includes(inputSearch.toLowerCase())
                     "
+                    @onclick=""
                 >
                     <span :class="pillColor(tag.color)" class="m-2"></span>
                     {{ tag.name }}
