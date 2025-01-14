@@ -26,6 +26,7 @@
                         :delete-todo="deleteTodo"
                         :update-todo="updateTodo"
                         :todo="todo"
+                        :tags="tags"
                     />
                 </li>
             </transition-group>
@@ -53,10 +54,24 @@ export default {
             newTodo: '',
             notification: '',
             notificationClass: '',
+            tags: [],
         }
     },
     methods: {
-        // fetch
+        // fetch tags
+        async fetchTags() {
+            try {
+                const response = await axios.get('/api/tags')
+                this.tags = response.data
+            } catch (error) {
+                console.error(error)
+                this.showNotification(
+                    'Erreur lors de la récupération des tags.',
+                    'bg-red-100 text-red-700'
+                )
+            }
+        },
+        // fetch todos
         async fetchTodos() {
             try {
                 const response = await axios.get('/api/todos')
@@ -149,7 +164,7 @@ export default {
     },
     mounted() {
         this.fetchTodos()
-
+        this.fetchTags()
         // Initialiser Sortable
         Sortable.create(this.$refs.sortableList, {
             handle: '.handle',

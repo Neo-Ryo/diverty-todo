@@ -4,7 +4,7 @@ import TagModal from './tag/TagModal.vue'
 
 export default {
     name: 'Todo',
-    props: ['todo', 'updateTodo', 'deleteTodo'],
+    props: ['todo', 'updateTodo', 'deleteTodo', 'tags'],
     components: {
         Tag,
         TagModal,
@@ -23,9 +23,6 @@ export default {
             this.isModalVisible = false
         },
     },
-    // mounted() {
-    //     console.log(this.todo)
-    // },
 }
 </script>
 
@@ -118,7 +115,8 @@ export default {
             <TagModal
                 v-show="isModalVisible"
                 @close="closeModal"
-                :tags="['Bugs', 'Front']"
+                :tags="tags"
+                :todo="todo"
             />
         </div>
     </div>
