@@ -36,7 +36,7 @@ router.delete('/:id', async (req, res) => {
     try {
         await Tag.deleteOne({ _id: req.params.id })
 
-        res.status(200).json({ message: 'Deleted Tag' })
+        res.status(200).json({ message: 'Tag deleted' })
     } catch (err) {
         res.status(500).json({ message: err.message })
     }
