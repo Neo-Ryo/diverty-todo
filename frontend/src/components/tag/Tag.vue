@@ -12,6 +12,8 @@ const props = defineProps(['name', 'color'])
 
 <style scoped>
 .custom {
-    background-color: v-bind('props.color');
+    color: v-bind('props.color');
+    /* add opacity */
+    background-color: v-bind('props.color + "4d"');
 }
 </style>

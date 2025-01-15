@@ -50,7 +50,6 @@ export default {
     },
     data() {
         return {
-            todos: [],
             newTodo: '',
             notification: '',
             notificationClass: '',
@@ -75,7 +74,8 @@ export default {
         async fetchTodos() {
             try {
                 const response = await axios.get('/api/todos')
-                this.todos = response.data
+                // this.todos = response.data
+                this.setTodos(response.data)
             } catch (error) {
                 console.error(error)
                 this.showNotification(
@@ -90,7 +90,7 @@ export default {
                 const response = await axios.post('/api/todos', {
                     title: this.newTodo,
                 })
-                this.todos.push(response.data)
+                this.addATodo(response.data)
                 this.newTodo = ''
                 this.showNotification(
                     'Tâche ajoutée avec succès.',
@@ -124,7 +124,7 @@ export default {
         async deleteTodo(id) {
             try {
                 await axios.delete(`/api/todos/${id}`)
-                this.todos = this.todos.filter((todo) => todo._id !== id)
+                this.deleteATodo(id)
                 this.showNotification(
                     'Tâche supprimée.',
                     'bg-green-100 text-green-700'

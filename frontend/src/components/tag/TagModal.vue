@@ -20,8 +20,6 @@ function handleNewTag() {
 }
 
 async function createTag() {
-    console.log('clicked')
-
     if (newTag.value.name.trim() === '') return
     try {
         const response = await axios.post('/api/tags', {
@@ -33,6 +31,32 @@ async function createTag() {
     } catch (error) {
         console.error(error)
     }
+}
+
+async function deleteTag(id) {
+    try {
+        const response = await axios.delete(`/api/tags/${id}`)
+        if (response.status === 200) {
+            store.deleteATag(id)
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+async function assignOrUnassignTagToTodo(todoId, tagId) {
+    try {
+        const response = await axios.put(`/api/todos/${todoId}/tags/${tagId}`)
+        if (response.status === 200) {
+            store.updateATodo(response.data)
+        }
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+function cancelTagCreation() {
+    newTag.value = null
 }
 </script>
 
@@ -69,17 +93,17 @@ async function createTag() {
                 :key="tag._id"
                 class="list-none"
             >
-                <!-- filter tags with search -->
+                <!-- filter tags with search in v-if -->
                 <div
-                    class="flex items-center p-2 rounded-md shadow-sm hover:cursor-pointer hover:bg-slate-200"
+                    class="flex items-center p-2 rounded-md shadow-sm hover:cursor-pointer hover:bg-slate-200 group"
                     v-if="
                         inputSearch === '' ||
                         tag.name
                             .toLowerCase()
                             .includes(inputSearch.toLowerCase())
                     "
+                    @click="assignOrUnassignTagToTodo(props.todo._id, tag._id)"
                 >
-                    <!-- <span :class="pillColor(tag.color)"  class="m-2"></span> -->
                     <TagPill :color="tag.color" />
                     {{ tag.name }}
                     <div
@@ -92,7 +116,7 @@ async function createTag() {
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                         >
-                            <rect width="24" height="24" fill="white" />
+                            <rect width="24" height="24" />
                             <path
                                 d="M5 13.3636L8.03559 16.3204C8.42388 16.6986 9.04279 16.6986 9.43108 16.3204L19 7"
                                 stroke="currentColor"
@@ -102,20 +126,40 @@ async function createTag() {
                             />
                         </svg>
                     </div>
+                    <!-- delete a tag -->
+                    <div
+                        class="hidden group-hover:flex group-hover:justify-center group-hover:items-center w-4 h-4 ml-auto text-red-500 hover:text-red-700"
+                        @click="deleteTag(tag._id.toString())"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </div>
                 </div>
             </li>
+            <!-- tag creation part -->
             <div
                 class="flex items-center p-2 rounded-md shadow-sm"
                 v-if="newTag"
             >
-                <!-- <span :class="pillColor(tag.color)"  class="m-2"></span> -->
                 <TagPill :color="newTag.color" />
                 <input
                     class="appearance-none"
                     type="text"
                     v-model="newTag.name"
                 />
-
+                <!-- create tag -->
                 <button
                     class="h-6 w-6 mx-2 text-green-500"
                     type="button"
@@ -136,7 +180,8 @@ async function createTag() {
                         />
                     </svg>
                 </button>
-                <button class="text-red-500">
+                <!-- cancel -->
+                <button class="text-red-500" @click="cancelTagCreation()">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-6 w-6"

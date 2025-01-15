@@ -4,6 +4,7 @@ const express = require('express')
 const router = express.Router()
 const Todo = require('../models/Todo')
 const Tag = require('../models/Tag')
+const { assignTagToTodoMiddleware } = require('../middleware/paramsCheck')
 
 // GET all todos
 router.get('/', async (req, res) => {
@@ -93,6 +94,39 @@ router.put('/reorder', async (req, res) => {
         res.status(500).json({ message: err.message })
     }
 })
+
+// Assign or Unassign tag to todos
+router.put(
+    '/:todoId/tags/:tagId',
+    assignTagToTodoMiddleware,
+    async (req, res) => {
+        const { todoId, tagId } = req.params // Array de todos avec les nouvelles positions
+
+        try {
+            const todo = await Todo.findById(todoId)?.populate('tags')
+            if (!todo) {
+                return res.status(404).json({ message: 'Todo not found' })
+            }
+            const tag = await Tag.findById(tagId)
+            if (!tag) {
+                return res.status(404).json({ message: 'Tag not found' })
+            }
+            if (
+                todo.tags.find((t) => t._id.toString() === tag._id.toString())
+            ) {
+                todo.tags = todo.tags.filter(
+                    (t) => t._id.toString() !== tag._id.toString()
+                )
+            } else {
+                todo.tags.push(tag)
+            }
+            await todo.save()
+            res.json(todo)
+        } catch (err) {
+            res.status(500).json({ message: err.message })
+        }
+    }
+)
 
 // Middleware to get todo by ID
 async function getTodo(req, res, next) {

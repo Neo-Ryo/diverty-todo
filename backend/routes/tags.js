@@ -32,4 +32,14 @@ router.post('/', colorIsHexadecimal, nameIsString, async (req, res) => {
     }
 })
 
+router.delete('/:id', async (req, res) => {
+    try {
+        await Tag.deleteOne({ _id: req.params.id })
+
+        res.status(200).json({ message: 'Deleted Tag' })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+})
+
 module.exports = router
