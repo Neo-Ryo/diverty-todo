@@ -62,7 +62,7 @@ function cancelTagCreation() {
 
 <template>
     <div class="modal-backdrop">
-        <div class="flex flex-col min-w-80 min-h-80 rounded-md border bg-white">
+        <div class="flex flex-col min-w-80 rounded-md border bg-white">
             <!-- search bar + color selecto + create button -->
             <div class="flex justify-between items-center m-2 p-2">
                 <input
@@ -87,67 +87,79 @@ function cancelTagCreation() {
                     +
                 </button>
             </div>
-
-            <li
-                v-for="tag in store.tags.value"
-                :key="tag._id"
-                class="list-none"
-            >
-                <!-- filter tags with search in v-if -->
-                <div
-                    class="flex items-center p-2 rounded-md shadow-sm hover:cursor-pointer hover:bg-slate-200 group"
-                    v-if="
-                        inputSearch === '' ||
-                        tag.name
-                            .toLowerCase()
-                            .includes(inputSearch.toLowerCase())
-                    "
-                    @click="assignOrUnassignTagToTodo(props.todo._id, tag._id)"
+            <!-- tag list -->
+            <div class="max-h-72 overflow-y-scroll">
+                <li
+                    v-for="tag in store.tags.value"
+                    :key="tag._id"
+                    class="list-none"
                 >
-                    <TagPill :color="tag.color" />
-                    {{ tag.name }}
+                    <!-- filter tags with search in v-if -->
                     <div
-                        v-if="isSelected(tag._id.toString())"
-                        class="h-6 w-6 mx-2 text-blue-500"
+                        class="flex items-center p-2 rounded-md shadow-sm group"
+                        v-if="
+                            inputSearch === '' ||
+                            tag.name
+                                .toLowerCase()
+                                .includes(inputSearch.toLowerCase())
+                        "
                     >
-                        <!-- check mark -->
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
+                        <TagPill :color="tag.color" />
+                        {{ tag.name }}
+                        <div
+                            class="h-6 w-6 mx-2 cursor-pointer"
+                            :class="{
+                                'text-blue-500': isSelected(tag._id.toString()),
+                                'text-slate-200': !isSelected(
+                                    tag._id.toString()
+                                ),
+                            }"
+                            @click="
+                                assignOrUnassignTagToTodo(
+                                    props.todo._id,
+                                    tag._id
+                                )
+                            "
                         >
-                            <rect width="24" height="24" />
-                            <path
-                                d="M5 13.3636L8.03559 16.3204C8.42388 16.6986 9.04279 16.6986 9.43108 16.3204L19 7"
+                            <!-- check mark -->
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <rect width="24" height="24" />
+                                <path
+                                    d="M5 13.3636L8.03559 16.3204C8.42388 16.6986 9.04279 16.6986 9.43108 16.3204L19 7"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                />
+                            </svg>
+                        </div>
+                        <!-- delete a tag -->
+                        <div
+                            class="hidden group-hover:flex cursor-pointer group-hover:justify-center group-hover:items-center w-4 h-4 ml-auto text-red-500 hover:text-red-700"
+                            @click="deleteTag(tag._id.toString())"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
                                 stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                            />
-                        </svg>
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </div>
                     </div>
-                    <!-- delete a tag -->
-                    <div
-                        class="hidden group-hover:flex group-hover:justify-center group-hover:items-center w-4 h-4 ml-auto text-red-500 hover:text-red-700"
-                        @click="deleteTag(tag._id.toString())"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </div>
-                </div>
-            </li>
+                </li>
+            </div>
             <!-- tag creation part -->
             <div
                 class="flex items-center p-2 rounded-md shadow-sm"
@@ -198,9 +210,15 @@ function cancelTagCreation() {
                     </svg>
                 </button>
             </div>
-            <button type="button" class="self-end m-2" @click="$emit('close')">
-                x
-            </button>
+            <div class="w-full flex justify-center items-center mt-auto mb-2">
+                <button
+                    type="button"
+                    class="bg-red-500 p-1 text-white rounded-md"
+                    @click="$emit('close')"
+                >
+                    close
+                </button>
+            </div>
         </div>
     </div>
 </template>

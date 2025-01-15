@@ -3,7 +3,7 @@ const props = defineProps(['color'])
 </script>
 
 <template>
-    <span class="w-2 h-2 m-2 rounded-full custom"></span>
+    <span class="w-4 h-4 my-1 mx-2 rounded-full custom"></span>
 </template>
 
 <style scoped>

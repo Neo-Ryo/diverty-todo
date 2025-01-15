@@ -5,11 +5,11 @@ const todos = ref([])
 
 export function useStore() {
     function updateATodo(t) {
-        todos.value = todos.value.reduce((acc, curr) => {
-            if (curr._id.toString() === t._id.toString()) {
+        todos.value = todos.value.reduce((acc, todo) => {
+            if (todo._id.toString() === t._id.toString()) {
                 acc.push(t)
             } else {
-                acc.push(curr)
+                acc.push(todo)
             }
             return acc
         }, [])
@@ -31,6 +31,19 @@ export function useStore() {
     }
     function deleteATag(id) {
         tags.value = tags.value.filter((t) => t._id.toString() !== id)
+        // update current todo according to deleted tag
+        todos.value = todos.value.reduce((acc, todo) => {
+            if (todo.tags.find((tag) => tag._id.toString() === id)) {
+                const updated = {
+                    ...todo,
+                    tags: todo.tags.filter((t) => t._id.toString() !== id),
+                }
+                acc.push(updated)
+            } else {
+                acc.push(todo)
+            }
+            return acc
+        }, [])
     }
     return {
         tags,
