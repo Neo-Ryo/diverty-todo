@@ -20,8 +20,8 @@ router.get('/', async (req, res) => {
 router.post('/', colorIsHexadecimal, nameIsString, async (req, res) => {
     try {
         const { name, color } = req.body
-        const isTagExists = await Tag.findOne({ name })
-        if (isTagExists) {
+        const exists = await Tag.findOne({ name })
+        if (exists) {
             return res.status(409).json({ message: 'Tag already exists' })
         }
         const newTag = new Tag({ name, color })

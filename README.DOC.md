@@ -1,5 +1,30 @@
 # Readme avec documentation sur mon travail
 
+## TODOS
+
+#### PUT /api/todos/:todoId/tags/:tagId
+
+Crée une nouvelle tâche
+
+```json
+// Response
+{
+    "_id": "64b91d841aa2d933285b5670",
+    "title": "Acheter du lait",
+    "completed": false,
+    "position": 1,
+    "tags": [
+        {
+            "_id": "6786a00c4817377e5c2e78c7",
+            "name": "Courses",
+            "color": "#e01b24"
+        }
+    ]
+}
+```
+
+## TAGS
+
 #### GET /api/tags
 
 Retourne tous les tags
@@ -16,7 +41,7 @@ Retourne tous les tags
 
 #### POST /api/tags
 
-Crée une nouvelle tâche
+Crée un tag
 
 ```json
 // Request
@@ -35,7 +60,7 @@ Crée une nouvelle tâche
 
 #### DELETE /api/tags/:id
 
-Crée une nouvelle tâche
+Supprime un tag
 
 ```json
 // Response
