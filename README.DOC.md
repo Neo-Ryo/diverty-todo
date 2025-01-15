@@ -1,6 +1,8 @@
 # Readme avec documentation sur mon travail
 
-## TODOS
+## Les routes ajoutees au backend
+
+### TODOS
 
 #### PUT /api/todos/:todoId/tags/:tagId
 
@@ -23,7 +25,53 @@ Crée une nouvelle tâche
 }
 ```
 
-## TAGS
+#### GET /api/todos/search/:filter
+
+Filtrer par titre
+
+```json
+// Response
+[
+    {
+        "_id": "64b91d841aa2d933285b5670",
+        "title": "Acheter du lait",
+        "completed": false,
+        "position": 1,
+        "tags": [
+            {
+                "_id": "6786a00c4817377e5c2e78c7",
+                "name": "Courses",
+                "color": "#e01b24"
+            }
+        ]
+    }
+]
+```
+
+#### GET /api/todos/completed/:status
+
+Filtrer par status
+
+```json
+// Response
+[
+    {
+        "_id": "64b91d841aa2d933285b5670",
+        "title": "Acheter du lait",
+        "completed": false,
+        "position": 1,
+        "tags": [
+            {
+                "_id": "6786a00c4817377e5c2e78c7",
+                "name": "Courses",
+                "color": "#e01b24"
+            }
+        ]
+    }
+]
+```
+
+### TAGS
 
 #### GET /api/tags
 

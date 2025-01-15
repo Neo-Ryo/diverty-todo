@@ -14,7 +14,31 @@
                 Ajouter
             </button>
         </form>
+        <!-- search input -->
+        <input
+            class="w-full border rounded-md p-2"
+            type="text"
+            name="search-todos"
+            placeholder="Rechercher une tache"
+            id="search-todos"
+            v-model="searchTodo"
+        />
+        <!-- filters -->
+        <div class="flex my-2 justify-center items-center">
+            <label for="todos-select" class="mx-2 text-sm text-slate-400"
+                >Filtre des taches:</label
+            >
 
+            <select
+                id="todos-select"
+                @change="(e) => filterTodoCompleted(e.target.value)"
+                class="rounded-md border bg-transparent p-1"
+            >
+                <option value="All">Toutes</option>
+                <option value="completed">complétées</option>
+                <option value="not-completed">en cours</option>
+            </select>
+        </div>
         <div ref="sortableList" class="space-y-2">
             <transition-group>
                 <li
@@ -50,11 +74,23 @@ export default {
     },
     data() {
         return {
+            timer: null,
+            searchTodo: '',
+            filterTodo: 'All',
             newTodo: '',
             notification: '',
             notificationClass: '',
             ...store,
         }
+    },
+    watch: {
+        searchTodo: function () {
+            clearTimeout(this.timer)
+            this.timer = setTimeout(() => {
+                console.log('test')
+                return this.searchTodos(this.searchTodo)
+            }, 350)
+        },
     },
     methods: {
         // fetch tags
@@ -133,6 +169,49 @@ export default {
                 console.error(error)
                 this.showNotification(
                     'Erreur lors de la suppression de la tâche.',
+                    'bg-red-100 text-red-700'
+                )
+            }
+        },
+        // search todos
+        async searchTodos(filter) {
+            try {
+                if (filter === '') {
+                    clearTimeout(this.timer)
+                    return this.fetchTodos()
+                }
+                const response = await axios.get(`/api/todos/search/${filter}`)
+                this.setTodos(response.data)
+            } catch (error) {
+                console.error(error)
+                this.showNotification(
+                    'Erreur lors de la récupération des todos.',
+                    'bg-red-100 text-red-700'
+                )
+            }
+        },
+        async filterTodoCompleted(status) {
+            if (
+                status !== 'All' &&
+                status !== 'completed' &&
+                status !== 'not-completed'
+            )
+                return
+
+            if (status === 'All') {
+                return this.fetchTodos()
+            }
+            try {
+                const response = await axios.get(
+                    `/api/todos/completed/${
+                        status === 'completed' ? 'true' : 'false'
+                    }`
+                )
+                this.setTodos(response.data)
+            } catch (error) {
+                console.error(error)
+                this.showNotification(
+                    'Erreur lors de la récupération des todos.',
                     'bg-red-100 text-red-700'
                 )
             }

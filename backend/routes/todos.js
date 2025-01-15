@@ -4,7 +4,11 @@ const express = require('express')
 const router = express.Router()
 const Todo = require('../models/Todo')
 const Tag = require('../models/Tag')
-const { assignTagToTodoMiddleware } = require('../middleware/paramsCheck')
+const {
+    assignTagToTodoMiddleware,
+    filterSearch,
+    completedStatusCheck,
+} = require('../middleware/paramsCheck')
 
 // GET all todos
 router.get('/', async (req, res) => {
@@ -19,6 +23,40 @@ router.get('/', async (req, res) => {
 // GET one todo
 router.get('/:id', getTodo, (req, res) => {
     res.json(res.todo)
+})
+
+// GET search todos
+router.get('/search/:filter', filterSearch, async (req, res) => {
+    const filter = req.params.filter
+    try {
+        const todos = await Todo.find({
+            title: { $regex: filter, $options: 'i' },
+        })
+            .populate('tags')
+            .sort('position')
+            .exec()
+
+        res.json(todos)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+})
+
+// GET filter todos completed
+router.get('/completed/:status', completedStatusCheck, async (req, res) => {
+    const status = req.params.status
+    try {
+        const todos = await Todo.find({
+            completed: status,
+        })
+            .populate('tags')
+            .sort('position')
+            .exec()
+
+        res.json(todos)
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
 })
 
 // CREATE a todo
