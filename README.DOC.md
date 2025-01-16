@@ -25,9 +25,9 @@ Crée une nouvelle tâche
 }
 ```
 
-#### GET /api/todos/search/:filter
+#### GET /api/todos/search/filter
 
-Filtrer par titre
+Filtre les todos en fonction des query
 
 ```json
 // Response
@@ -48,7 +48,7 @@ Filtrer par titre
 ]
 ```
 
-#### GET /api/todos/completed/:status
+<!-- #### GET /api/todos/completed/:status
 
 Filtrer par status
 
@@ -69,7 +69,7 @@ Filtrer par status
         ]
     }
 ]
-```
+``` -->
 
 ### TAGS
 

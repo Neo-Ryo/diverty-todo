@@ -21,23 +21,58 @@
             name="search-todos"
             placeholder="Rechercher une tache"
             id="search-todos"
-            v-model="searchTodo"
+            v-model="title"
         />
         <!-- filters -->
         <div class="flex my-2 items-center">
             <label for="todos-filter-status" class="mx-2 text-sm text-slate-400"
                 >Status</label
             >
-
             <select
                 id="todos-filter-status"
-                @change="(e) => filterTodoCompleted(e.target.value)"
+                v-model="completed"
                 class="rounded-md border bg-transparent p-1"
             >
-                <option value="All">-</option>
-                <option value="completed">complétées</option>
-                <option value="not-completed">en cours</option>
+                <option value="">Tous</option>
+                <option value="true">complétées</option>
+                <option value="false">en cours</option>
             </select>
+
+            <label for="todos-filter-status" class="mx-2 text-sm text-slate-400"
+                >Tags</label
+            >
+            <select
+                id="todos-filter-status"
+                v-model="tag"
+                class="rounded-md border bg-transparent p-1"
+            >
+                <option value="">Tous</option>
+                <option v-for="tag in tags" :value="tag._id">
+                    {{ tag.name }}
+                </option>
+            </select>
+            <div class="ml-auto">
+                <button
+                    @click="resetSearchQuery()"
+                    class="text-red-500 hover:text-red-700 focus:outline-none"
+                >
+                    <!-- cross svg -->
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
+                    </svg>
+                </button>
+            </div>
         </div>
         <div ref="sortableList" class="space-y-2">
             <transition-group>
@@ -77,7 +112,9 @@ export default {
     data() {
         return {
             timer: null,
-            searchTodo: '',
+            title: '',
+            tag: '',
+            completed: '',
             filterTodo: 'All',
             newTodo: '',
             notification: '',
@@ -85,12 +122,24 @@ export default {
             ...store,
         }
     },
+    computed: {
+        searchQueryTodos: {
+            get() {
+                return {
+                    title: this.title,
+                    tag: this.tag,
+                    completed: this.completed,
+                }
+            },
+        },
+    },
+    // watch the computed aggregation of title, tag and completed state to set params
+    // and setTime to debounce trigger request
     watch: {
-        searchTodo: function () {
+        searchQueryTodos: function () {
             clearTimeout(this.timer)
             this.timer = setTimeout(() => {
-                console.log('test')
-                return this.searchTodos(this.searchTodo)
+                return this.searchTodos(this.searchQueryTodos)
             }, 350)
         },
     },
@@ -176,13 +225,12 @@ export default {
             }
         },
         // search todos
-        async searchTodos(filter) {
+        async searchTodos(params) {
             try {
-                if (filter === '') {
-                    clearTimeout(this.timer)
-                    return this.fetchTodos()
-                }
-                const response = await axios.get(`/api/todos/search/${filter}`)
+                clearTimeout(this.timer)
+                const response = await axios.get('/api/todos/search/filter', {
+                    params,
+                })
                 this.setTodos(response.data)
             } catch (error) {
                 console.error(error)
@@ -217,6 +265,11 @@ export default {
                     'bg-red-100 text-red-700'
                 )
             }
+        },
+        resetSearchQuery() {
+            this.title = ''
+            this.tag = ''
+            this.completed = ''
         },
         // dnd
         async onDragEnd() {

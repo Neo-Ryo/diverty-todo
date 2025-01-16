@@ -4,11 +4,7 @@ const express = require('express')
 const router = express.Router()
 const Todo = require('../models/Todo')
 const Tag = require('../models/Tag')
-const {
-    assignTagToTodoMiddleware,
-    filterSearch,
-    completedStatusCheck,
-} = require('../middleware/paramsCheck')
+const { assignTagToTodoMiddleware } = require('../middleware/paramsCheck')
 
 // GET all todos
 router.get('/', async (req, res) => {
@@ -26,29 +22,20 @@ router.get('/:id', getTodo, (req, res) => {
 })
 
 // GET search todos
-router.get('/search/:filter', filterSearch, async (req, res) => {
-    const filter = req.params.filter
+router.get('/search/filter', async (req, res) => {
+    const query = req.query
     try {
-        const todos = await Todo.find({
-            title: { $regex: filter, $options: 'i' },
-        })
-            .populate('tags')
-            .sort('position')
-            .exec()
-
-        res.json(todos)
-    } catch (err) {
-        res.status(500).json({ message: err.message })
-    }
-})
-
-// GET filter todos completed
-router.get('/completed/:status', completedStatusCheck, async (req, res) => {
-    const status = req.params.status
-    try {
-        const todos = await Todo.find({
-            completed: status,
-        })
+        let options = {}
+        if (query.title) {
+            options.title = { $regex: query.title, $options: 'i' }
+        }
+        if (query.completed) {
+            options.completed = query.completed
+        }
+        if (query.tag) {
+            options.tags = { $in: [query.tag] }
+        }
+        const todos = await Todo.find(options)
             .populate('tags')
             .sort('position')
             .exec()
