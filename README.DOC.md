@@ -1,12 +1,21 @@
 # Readme avec documentation sur mon travail
 
+## Installation
+
+Suivre la meme routine d'installation que sur le README.md
+
+## Models backend
+
+-   Creation du model Tag visible `./backend/models/Tag.js`
+-   Modification di model Todo avec l'ajout de la relation avec le model Tag
+
 ## Les routes ajoutees au backend
 
 ### TODOS
 
 #### PUT /api/todos/:todoId/tags/:tagId
 
-Crée une nouvelle tâche
+Pour assigner ou retirer un tag a une tache
 
 ```json
 // Response
@@ -29,6 +38,10 @@ Crée une nouvelle tâche
 
 Filtre les todos en fonction des query
 
+ex: `/api/todos/search/filter?completed=true&tag=un-id-de-tag&title=toto`
+
+Les query `completed`, `title` et `tag` ne sont pas obligatoire
+
 ```json
 // Response
 [
@@ -47,29 +60,6 @@ Filtre les todos en fonction des query
     }
 ]
 ```
-
-<!-- #### GET /api/todos/completed/:status
-
-Filtrer par status
-
-```json
-// Response
-[
-    {
-        "_id": "64b91d841aa2d933285b5670",
-        "title": "Acheter du lait",
-        "completed": false,
-        "position": 1,
-        "tags": [
-            {
-                "_id": "6786a00c4817377e5c2e78c7",
-                "name": "Courses",
-                "color": "#e01b24"
-            }
-        ]
-    }
-]
-``` -->
 
 ### TAGS
 
@@ -116,3 +106,13 @@ Supprime un tag
     "message": "Tag deleted"
 }
 ```
+
+## Cote front
+
+J'ai tres simplement organiser le dossier `components` par composants et j'ai creer un store simple pour pouvoir
+gerer certains `states` de manieres global.
+
+### Autres
+
+la ligne commentee dan `./frontend/vue,config.js` m'a permis de travailler en dev localement (a moins que je n'ai rate une instruction).
+Pour toutes autres informations n'hesitez pas a me contacter.
