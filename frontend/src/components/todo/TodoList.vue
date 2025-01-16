@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="flex flex-col">
         <form @submit.prevent="addTodo" class="flex mb-4">
             <input
                 v-model="newTodo"
@@ -24,17 +24,17 @@
             v-model="searchTodo"
         />
         <!-- filters -->
-        <div class="flex my-2 justify-center items-center">
-            <label for="todos-select" class="mx-2 text-sm text-slate-400"
-                >Filtre des taches:</label
+        <div class="flex my-2 items-center">
+            <label for="todos-filter-status" class="mx-2 text-sm text-slate-400"
+                >Status</label
             >
 
             <select
-                id="todos-select"
+                id="todos-filter-status"
                 @change="(e) => filterTodoCompleted(e.target.value)"
                 class="rounded-md border bg-transparent p-1"
             >
-                <option value="All">Toutes</option>
+                <option value="All">-</option>
                 <option value="completed">complétées</option>
                 <option value="not-completed">en cours</option>
             </select>
@@ -63,8 +63,10 @@ import Sortable from 'sortablejs'
 import Tag from '../tag/Tag.vue'
 import TagModal from '../tag/TagModal.vue'
 import Todo from './Todo.vue'
+
 import { useStore } from '../store/store'
 const store = useStore()
+
 export default {
     name: 'TodoList',
     components: {
