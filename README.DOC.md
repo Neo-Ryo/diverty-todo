@@ -6,7 +6,7 @@ Suivre la meme routine d'installation que sur le README.md
 
 ## Models backend
 
--   Creation du model Tag visible `./backend/models/Tag.js`
+-   Creation du model Tag `./backend/models/Tag.js`
 -   Modification di model Todo avec l'ajout de la relation avec le model Tag
 
 ## Les routes ajoutees au backend
