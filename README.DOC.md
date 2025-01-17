@@ -114,5 +114,5 @@ gerer certains `states` de manieres global.
 
 ### Autres
 
-la ligne commentee dans `./frontend/vue,config.js` m'a permis de travailler en dev localement (a moins que je n'ai rate une instruction).
+la ligne commentee dans `./frontend/vue.config.js` m'a permis de travailler en dev localement (a moins que je n'ai rate une instruction).
 Pour toutes autres informations n'hesitez pas a me contacter.
